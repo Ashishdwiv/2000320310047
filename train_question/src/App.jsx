@@ -1,28 +1,32 @@
 import { useEffect, useState } from 'react'
 import './App.css'
+import TrainTable from './TrainTable';
+import { Route, Routes } from 'react-router-dom';
+import Train from './Train';
 
-const body1 = {
+const data1 = {
+  clientID: "f6566b3c-868e-4cdd-ae09-835171c92adb",
+  clientSecret: "GLXawNpUCRNoVMTK",
   companyName: "Train Central",
-  ownerName: "Ashish",
-  rollNo: "047",
   ownerEmail: "Ashish.20b0311210@abes.ac.in",
-  accessCode: "qxrwbC"
+  ownerName: "Ashish",
+  rollNo: "2000320310047"
 }
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [token, setToken] = useState();
+  // console.log(token);
 
   const fetchData = async () => {
-    const fetchedData = await fetch("http://20.244.56.144/train/register", {
+    const fetchedData = await fetch("http://20.244.56.144/train/auth", {
       method: "POST",
       headers: {
         'Content-Type': "application/json"
       },
-
-      body: JSON.stringify(body1)
+      body: JSON.stringify(data1)
     });
     const data = await fetchedData.json();
-    console.log(data);
+    setToken(data.access_token);
   }
 
   useEffect(() => {
@@ -31,6 +35,10 @@ function App() {
 
   return (
     <div className="App">
+      <Routes>
+        {token && <Route path="/" element={<TrainTable token={token} />} />}
+        {token && <Route path="/train/:trainNumber" element={<Train token={token} />} />}
+      </Routes>
 
     </div>
   )
